@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <plugins>
+        <plugin interceptor="interceptor.PageInterceptor"/>
+    </plugins>
+
+    <environments default="development">
+        <environment id="development">
+            <!-- type="JDBC" 代表使用JDBC的提交和回滚来管理事务 -->
+            <transactionManager type="JDBC"/>
+            <!-- mybatis提供了3种数据源类型，分别是：POOLED,UNPOOLED,JNDI -->
+            <!-- POOLED 表示支持JDBC数据源连接池 -->
+            <!-- UNPOOLED 表示不支持数据源连接池 -->
+            <!-- JNDI 表示支持外部数据源连接池 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3309/micro_message"/>
+                <property name="username" value="root" />
+                <property name="password" value="74645973" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <!--注册usermapping.xml文件-->
+        <mapper resource="config/sqlxml/Message.xml"/>
+        <mapper resource="config/sqlxml/Command.xml"/>
+        <mapper resource="config/sqlxml/CommandContent.xml"/>
+    </mappers>
+</configuration>

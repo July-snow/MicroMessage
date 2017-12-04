@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.ICommand">
+
+    <resultMap id="CommandSimple" type="bean.Command">
+        <id column="c_id" jdbcType="INTEGER" property="id"/>
+        <result column="c_name" jdbcType="VARCHAR" property="name"/>
+        <result column="c_description" jdbcType="VARCHAR" property="description"/>
+    </resultMap>
+
+    <resultMap id="Command" type="bean.Command">
+        <id column="c_id" jdbcType="INTEGER" property="id"/>
+        <result column="c_name" jdbcType="VARCHAR" property="name"/>
+        <result column="c_description" jdbcType="VARCHAR" property="description"/>
+        <collection property="contentList" resultMap="dao.ICommandContent.Content"/>
+    </resultMap>
+
+
+    <insert id="insertOneCommand" parameterType="bean.Command">
+        insert into command (c_name,c_description) values (#{name},#{description});
+    </insert>
+
+    <delete id="deleteOneCommand" parameterType="int">
+        DELETE FROM command WHERE c_id=#{_parameter}
+    </delete>
+
+    <select id="queryCommandListByPage"  parameterType="java.util.Map" resultMap="CommandSimple">
+        SELECT c_id,c_name,c_description FROM command
+        <where>
+            <if test="command.name!=null &amp;&amp;!&quot;&quot;.equals(command.name.trim())">
+                and c_name=#{command.name}</if>
+            <if test="command.description!=null and !&quot;&quot;.equals(command.description.trim())">
+                and c_description like '%' #{command.description} '%'</if>
+        </where>
+        ORDER BY c_id
+    </select>
+
+    <select id="queryContentByCommand" parameterType="int" resultMap="Command">
+        SELECT a.c_id,a.c_name,a.c_description,b.id,b.content,b.command_id
+        FROM command a LEFT JOIN command_content b
+        ON a.c_id = b.command_id
+        WHERE a.c_id=#{commandId}
+    </select>
+
+    <select id="queryCommand"  parameterType="bean.Command" resultMap="Command">
+        SELECT a.c_id,a.c_name,a.c_description,b.id,b.content,b.command_id
+        FROM command a LEFT JOIN command_content b
+        ON a.c_id = b.command_id
+        <where>
+            <if test="name!=null &amp;&amp;!&quot;&quot;.equals(name.trim())"> and a.c_name=#{name}</if>
+            <if test="description!=null and !&quot;&quot;.equals(description.trim())"> and a.c_description like '%' #{description} '%'</if>
+        </where>
+
+    </select>
+</mapper>
